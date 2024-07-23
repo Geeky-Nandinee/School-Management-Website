@@ -30,20 +30,20 @@ function verifyToken(req, res, next) {
 }
 
 // Routes
-app.get("/", (req, res) => {
-    res.render('login');
-});
+// app.get("/", (req, res) => {
+//     res.render('login');
+// });
 
 app.get("/admin_login", (req, res) => {
     const school = req.query.school;
     res.render('admin_login', { school });
 });
 
-app.get("/super_admin", (req, res) => {
+app.get("/", (req, res) => {
     res.render('super_admin');
 });
 
-app.post("/super_admin", (req, res) => {
+app.post("/", (req, res) => {
     const selectedSchool = req.body.school;
     res.redirect(`/school_admin/${selectedSchool}`);
 });
