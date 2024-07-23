@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Panel</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Super Admin Panel</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <form action="/select-school" method="POST">
+                <div class="form-group">
+                    <select name="school">
+                        <option value="" disabled selected>Select a school</option>
+                        <option value="school1">School 1</option>
+                        <option value="school2">School 2</option>
+                        <option value="school3">School 3</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Select School</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

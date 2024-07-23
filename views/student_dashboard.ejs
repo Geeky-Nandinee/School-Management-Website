@@ -1,0 +1,162 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - School ERP</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Student Dashboard</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <h1>Welcome, <%= student.name %></h1>
+            <p><strong>School:</strong><%= student.school %> </p>
+            <p><strong>Email:</strong> <%= student.email %></p>
+            <p><strong>Medium:</strong> <%= student.medium %></p>
+            <p><strong>Standard:</strong> <%= student.standard %></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="quiz-section">
+            <h2>Assigned Quizzes</h2>
+            <ul id="quiz-list">
+                <% if (student.quizzes && student.quizzes.length > 0) { %>
+                    <% student.quizzes.forEach(quiz => { %>
+                        <li>
+                            <%= quiz.name %> 
+                            <% if (quiz.completed) { %>
+                                (Completed)
+                            <% } else { %>
+                                <a href="/take-quiz/<%= quiz.id %>" class="btn">Take Quiz</a>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                <% } else { %>
+                    <li>No quizzes assigned</li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="task-section">
+            <h2>Assigned Tasks</h2>
+            <ul id="task-list">
+                <% if (student.tasks && student.tasks.length > 0) { %>
+                    <% student.tasks.forEach(task => { %>
+                        <li>
+                            <%= task.name %> 
+                            <% if (task.completed) { %>
+                                (Completed)
+                            <% } else { %>
+                                <a href="/complete-task/<%= task.id %>" class="btn">Complete Task</a>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                <% } else { %>
+                    <li>No tasks assigned</li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 
+
+ -->
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - School ERP</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Student Dashboard</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <h1>Welcome, <%= student.name %></h1>
+            <p><strong>School:</strong> <%= student.school %></p>
+            <p><strong>Email:</strong> <%= student.email %></p>
+            <p><strong>Medium:</strong> <%= student.medium %></p>
+            <p><strong>Standard:</strong> <%= student.standard %></p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="task-section">
+            <h2>Assigned Tasks</h2>
+            <ul>
+                <% if (tasks && tasks.length > 0) { %>
+                    <% tasks.forEach(task => { %>
+                        <li>
+                            <h3><%= task.name %></h3>
+                            <p><%= task.description %></p>
+                            <p>Due: <%= task.dueDate.toLocaleDateString() %></p>
+                            <% if (!task.completed) { %>
+                                <button onclick="completeTask('<%= task._id %>')">Mark as Complete</button>
+                            <% } else { %>
+                                <span>Completed</span>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                <% } else { %>
+                    <li>No tasks assigned</li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="quiz-section">
+            <h2>Assigned Quizzes</h2>
+            <ul>
+                <% if (quizzes && quizzes.length > 0) { %>
+                    <% quizzes.forEach(quiz => { %>
+                        <li>
+                            <h3><%= quiz.name %></h3>
+                            <p><%= quiz.description %></p>
+                            <p>Due: <%= quiz.dueDate.toLocaleDateString() %></p>
+                            <% if (!quiz.completed) { %>
+                                <a href="/take-quiz/<%= quiz._id %>" class="btn">Take Quiz</a>
+                            <% } else { %>
+                                <span>Completed</span>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                <% } else { %>
+                    <li>No quizzes assigned</li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function completeTask(taskId) {
+            fetch(`/complete-task/${taskId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Task marked as complete');
+                        location.reload();
+                    } else {
+                        alert('Error completing task');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

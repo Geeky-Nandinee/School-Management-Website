@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Module</title>
+    
+</head>
+<body>
+    <h1>Teacher Details</h1>
+
+    <ul>
+        <% if (teachers && teachers.length > 0) { %>
+            <% teachers.forEach(teacher => { %>
+                <li><%= teacher.name %> - <%= teacher.email %></li>
+            <% }); %>
+        <% } else { %>
+            <li>No teachers found</li>
+        <% } %>
+    </ul>
+
+</body>
+</html>

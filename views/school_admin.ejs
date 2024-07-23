@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= school %> Admin Panel</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><%= school %> Admin Panel</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="admin-panel">
+            <h2>Students</h2>
+            <ul>
+                <% if (students && students.length > 0) { %>
+                    <% students.forEach(student => { %>
+                        <li><a href="/student/<%= student._id %>"><%= student.name %></a></li>
+                    <% }); %>
+                <% } else { %>
+                    <li>No students found</li>
+                <% } %>
+            </ul>
+
+            <h2>Teachers</h2>
+            <ul>
+                <% if (teachers && teachers.length > 0) { %>
+                    <% teachers.forEach(teacher => { %>
+                        <li><a href="/teacher/<%= teacher._id %>"><%= teacher.name %></a></li>
+                    <% }); %>
+                <% } else { %>
+                    <li>No teachers found</li>
+                <% } %>
+            </ul>
+
+            <a href="/signup?school=<%= school %>&role=student" class="btn">Add Student</a>
+            <a href="/signup?school=<%= school %>&role=teacher" class="btn">Add Teacher</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Assign Subject to Teacher</h2>
+        <form id="assign-subject-form">
+            <select name="teacherId" required>
+                <% teachers.forEach(teacher => { %>
+                    <option value="<%= teacher._id %>"><%= teacher.name %></option>
+                <% }); %>
+            </select>
+            <select name="subject" required>
+                <% availableSubjects.forEach(subject => { %>
+                    <option value="<%= subject %>"><%= subject %></option>
+                <% }); %>
+            </select>
+            <button type="submit">Assign Subject</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const assignSubjectForm = document.getElementById('assign-subject-form');
+
+            assignSubjectForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(assignSubjectForm);
+                const teacherId = formData.get('teacherId');
+                const subject = formData.get('subject');
+
+                fetch(`/assign_subject/${teacherId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ subject })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Subject assigned successfully');
+                    assignSubjectForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error assigning subject');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

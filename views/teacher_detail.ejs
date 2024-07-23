@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Details - School ERP</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Teacher Details</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="details">
+            <p><strong>Name:</strong> <%= teacher.name %></p>
+            <p><strong>Email:</strong> <%= teacher.email %></p>
+            <p><strong>Role:</strong> <%= teacher.role %></p>
+            <p><strong>Medium:</strong> <%= teacher.medium %></p>
+            <p><strong>Standard:</strong> <%= teacher.standard %></p>
+            <h4>Subjects</h4>
+            <ul>
+                <% if (teacher.subjects && teacher.subjects.length > 0) { %>
+                    <% teacher.subjects.forEach(function(subject) { %>
+                        <li><%= subject %></li>
+                    <% }) %>
+                <% } else { %>
+                    <li>No subjects assigned</li>
+                <% } %>
+            </ul>
+            <a href="/school_admin/<%= teacher.school %>" class="back-btn">Back to Admin Panel</a>
+        </div>
+    </div>
+</body>
+</html>

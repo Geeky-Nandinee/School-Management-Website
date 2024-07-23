@@ -1,0 +1,211 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - School ERP</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Teacher Dashboard</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <h1>Welcome, <%= teacher.name %></h1>
+            <p><strong>Email:</strong> <%= teacher.email %></p>
+            <p><strong>Role:</strong> <%= teacher.role %></p>
+            <p><strong>Medium:</strong> <%= teacher.medium %></p>
+            <p><strong>Standard:</strong> <%= teacher.standard %></p>
+
+            <h2>Assigned Subjects</h2>
+            <% if (teacher.subjects && teacher.subjects.length > 0) { %>
+                <ul>
+                    <% teacher.subjects.forEach(subject => { %>
+                        <li><%= subject %></li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No subjects assigned yet.</p>
+            <% } %>
+
+            <h2>Assign New Subject</h2>
+            <form action="/assign_subject/<%= teacher._id %>" method="POST">
+                <select name="subject">
+                    <% availableSubjects.forEach(subject => { %>
+                        <option value="<%= subject %>"><%= subject %></option>
+                    <% }); %>
+                </select>
+                <button type="submit">Assign Subject</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+ -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - School ERP</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Teacher Dashboard</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <h1>Welcome, <%= teacher.name %></h1>
+            <p><strong>Email:</strong> <%= teacher.email %></p>
+            <p><strong>Role:</strong> <%= teacher.role %></p>
+            <p><strong>Medium:</strong> <%= teacher.medium %></p>
+            <p><strong>Standard:</strong> <%= teacher.standard %></p>
+
+            <h2>Assigned Subjects</h2>
+            <% if (teacher.subjects && teacher.subjects.length > 0) { %>
+                <ul>
+                    <% teacher.subjects.forEach(subject => { %>
+                        <li><%= subject %></li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No subjects assigned yet.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Create Task</h2>
+        <form id="create-task-form">
+            <input type="text" name="name" placeholder="Task Name" required>
+            <textarea name="description" placeholder="Task Description" required></textarea>
+            <input type="datetime-local" name="dueDate" required>
+            <button type="submit">Create Task</button>
+        </form>
+
+        <h2>Create Quiz</h2>
+        <form id="create-quiz-form">
+            <input type="text" name="name" placeholder="Quiz Name" required>
+            <textarea name="description" placeholder="Quiz Description" required></textarea>
+            <input type="datetime-local" name="dueDate" required>
+            <div id="questions-container"></div>
+            <button type="button" id="add-question">Add Question</button>
+            <button type="submit">Create Quiz</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const createTaskForm = document.getElementById('create-task-form');
+            const createQuizForm = document.getElementById('create-quiz-form');
+            const addQuestionButton = document.getElementById('add-question');
+            const questionsContainer = document.getElementById('questions-container');
+            let questionCount = 0;
+
+            createTaskForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(createTaskForm);
+                const task = {
+                    name: formData.get('name'),
+                    description: formData.get('description'),
+                    dueDate: formData.get('dueDate'),
+                    school: '<%= teacher.school %>'
+                };
+
+                fetch('/create-task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(task)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Task created successfully');
+                    createTaskForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error creating task');
+                });
+            });
+
+            createQuizForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(createQuizForm);
+                const quiz = {
+                    name: formData.get('name'),
+                    description: formData.get('description'),
+                    dueDate: formData.get('dueDate'),
+                    school: '<%= teacher.school %>',
+                    questions: []
+                };
+
+                const questionDivs = questionsContainer.querySelectorAll('.question');
+                questionDivs.forEach((div, index) => {
+                    const question = {
+                        question: div.querySelector('input[name^="question"]').value,
+                        options: [
+                            div.querySelector('input[name^="option1"]').value,
+                            div.querySelector('input[name^="option2"]').value,
+                            div.querySelector('input[name^="option3"]').value,
+                            div.querySelector('input[name^="option4"]').value
+                        ],
+                        correctAnswer: parseInt(div.querySelector('select[name^="correctAnswer"]').value)
+                    };
+                    quiz.questions.push(question);
+                });
+
+                fetch('/create-quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(quiz)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Quiz created successfully');
+                    createQuizForm.reset();
+                    questionsContainer.innerHTML = '';
+                    questionCount = 0;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error creating quiz');
+                });
+            });
+
+            addQuestionButton.addEventListener('click', function() {
+                questionCount++;
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <input type="text" name="question${questionCount}" placeholder="Question" required>
+                    <input type="text" name="option1_${questionCount}" placeholder="Option 1" required>
+                    <input type="text" name="option2_${questionCount}" placeholder="Option 2" required>
+                    <input type="text" name="option3_${questionCount}" placeholder="Option 3" required>
+                    <input type="text" name="option4_${questionCount}" placeholder="Option 4" required>
+                    <select name="correctAnswer${questionCount}" required>
+                        <option value="0">Option 1</option>
+                        <option value="1">Option 2</option>
+                        <option value="2">Option 3</option>
+                        <option value="3">Option 4</option>
+                    </select>
+                `;
+                questionsContainer.appendChild(questionDiv);
+            });
+        });
+    </script>
+</body>
+</html>
